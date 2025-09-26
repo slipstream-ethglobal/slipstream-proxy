@@ -1,0 +1,45 @@
+name: Update Parent Slipstream
+
+on:
+  push:
+    branches:
+      - main   # runs whenever you push to slipstream-proxy main
+
+jobs:
+  sync-to-parent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout proxy repo
+        uses: actions/checkout@v4
+
+      - name: Get last commit message
+        id: commitmsg
+        run: |
+          msg=$(git log -1 --pretty=%B)
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$msg" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Checkout parent repo (slipstream)
+        uses: actions/checkout@v4
+        with:
+          repository: slipstream-ethglobal/slipstream
+          token: ${{ secrets.SLIPSTREAM_PUSH_TOKEN }}
+          path: slipstream
+
+      - name: Update parent repo
+        run: |
+          cd slipstream
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage everything (or just specific files if that's safer)
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes in parent repo. Skipping commit."
+            exit 0
+          fi
+
+          git commit -m "${{ steps.commitmsg.outputs.message }}"
+          git push origin main
