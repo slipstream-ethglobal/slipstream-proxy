@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
-import { HealthResponse } from './health.dto';
+import { HealthResponse, NewRelayerHealthResponse } from './health.dto';
 
 @Injectable()
 export class NewRelayerService {
@@ -14,6 +14,19 @@ export class NewRelayerService {
       return response;
     } catch (error) {
       this.logger.error('Failed to get ping from relayer: ', error);
+      throw error;
+    }
+  }
+
+  async newRelayerPing() {
+    try {
+      const response = await this.httpClient.get<NewRelayerHealthResponse>(
+        '/api/v1/relayer/ping',
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error('Failed to get ping from new relayer: ', error);
       throw error;
     }
   }

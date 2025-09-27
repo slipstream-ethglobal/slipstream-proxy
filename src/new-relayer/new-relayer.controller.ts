@@ -11,4 +11,9 @@ export class NewRelayerController {
   async ping() {
     return await this.newRelayerService.ping();
   }
+
+  @Get('api/v1/relayer/ping')
+  async pingRelayer() {
+    return await this.newRelayerService.newRelayerPing();
+  }
 }
