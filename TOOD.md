@@ -1,5 +1,5 @@
 new routes as per relayer
-- [ ] /ping
+- [x] /ping
 - [ ] /api/v1/relayer
   - [ ] /ping
   - [ ] /relay

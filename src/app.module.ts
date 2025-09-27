@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ChainModule } from './chain/chain.module';
 import { CommonModule } from './common/common.module';
-import { HealthModule } from './health/health.module';
-import { TransfersModule } from './transfers/transfers.module';
+import { NewRelayerModule } from './new-relayer/new-relayer.module';
+
+// import { ChainModule } from './chain/chain.module';
+// import { HealthModule } from './health/health.module';
+// import { TransfersModule } from './transfers/transfers.module';
 
 @Module({
   imports: [
@@ -11,10 +13,11 @@ import { TransfersModule } from './transfers/transfers.module';
       isGlobal: true,
     }),
 
-    HealthModule,
-    ChainModule,
+    // HealthModule,
+    // ChainModule,
+    // TransfersModule,
     CommonModule,
-    TransfersModule,
+    NewRelayerModule,
   ],
 })
 export class AppModule {}
