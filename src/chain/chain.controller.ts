@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller, Get, Logger, Request } from '@nestjs/common';
-import { BaseResponseDto } from '../common/dto/base-response.dto';
 import { ChainService } from './chain.service';
 import { GetChainsResponseDto } from './dto/get-chains.dto';
 
@@ -13,9 +11,7 @@ export class ChainController {
   constructor(private readonly chainService: ChainService) {}
 
   @Get()
-  async getChains(
-    @Request() request: Request,
-  ): Promise<BaseResponseDto<GetChainsResponseDto>> {
+  async getChains(@Request() request: Request): Promise<GetChainsResponseDto> {
     const requestId = (request as any).requestId;
 
     try {
@@ -24,7 +20,7 @@ export class ChainController {
       this.logger.log(
         `[${requestId}] Successfully retrieved ${result.chains.length} chains`,
       );
-      return BaseResponseDto.success(result, requestId);
+      return result;
     } catch (error) {
       this.logger.error(`[${requestId}] Failed to get chains:`, error);
       throw error;

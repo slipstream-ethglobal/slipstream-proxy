@@ -1,19 +1,27 @@
 export interface ChainInfo {
-  chainId: number;
   name: string;
-  network: string;
+  chainId: number;
   rpcUrl: string;
-  blockExplorerUrl?: string;
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-  testnet: boolean;
-  supported: boolean;
+  explorerUrl: string;
+  contractAddress: string;
+  feeSettings: FeeSettings;
+  tokens: Record<string, TokenInfoDto>;
+}
+
+class FeeSettings {
+  baseFeeBps: string;
+  maxFeeBps: string;
+  minFeeUsd: string;
+}
+
+class TokenInfoDto {
+  address: string;
+  symbol: string;
+  name: string;
+  decimals: string;
 }
 
 export class GetChainsResponseDto {
+  success: boolean;
   chains: ChainInfo[];
-  total: number;
 }
