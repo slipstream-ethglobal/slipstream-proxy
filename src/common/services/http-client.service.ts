@@ -24,37 +24,45 @@ export class HttpClientService {
     this.timeout = this.configService.get<number>('RELAYER_TIMEOUT', 30000);
   }
 
-  async get<T>(endpoint: string, headers?: Record<string, string>): Promise<T> {
-    return this.makeRequest<T>('GET', endpoint, undefined, headers);
+  async get<T>(
+    endpoint: string,
+    params?: any,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    return this.makeRequest<T>('GET', endpoint, undefined, params, headers);
   }
 
   async post<T>(
     endpoint: string,
     data?: any,
+    params?: any,
     headers?: Record<string, string>,
   ): Promise<T> {
-    return this.makeRequest<T>('POST', endpoint, data, headers);
+    return this.makeRequest<T>('POST', endpoint, data, params, headers);
   }
 
   async put<T>(
     endpoint: string,
     data?: any,
+    params?: any,
     headers?: Record<string, string>,
   ): Promise<T> {
-    return this.makeRequest<T>('PUT', endpoint, data, headers);
+    return this.makeRequest<T>('PUT', endpoint, data, params, headers);
   }
 
   async delete<T>(
     endpoint: string,
+    params?: any,
     headers?: Record<string, string>,
   ): Promise<T> {
-    return this.makeRequest<T>('DELETE', endpoint, undefined, headers);
+    return this.makeRequest<T>('DELETE', endpoint, undefined, params, headers);
   }
 
   private async makeRequest<T>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     endpoint: string,
     data?: any,
+    params?: any,
     headers?: Record<string, string>,
   ): Promise<T> {
     const url = `${this.relayerBaseUrl}${endpoint}`;
@@ -71,6 +79,7 @@ export class HttpClientService {
         'User-Agent': 'SlipstreamProxy/1.0',
         ...headers,
       },
+      params: params !== undefined ? params : undefined,
       data: data !== undefined ? data : undefined,
       validateStatus: () => true,
     };
