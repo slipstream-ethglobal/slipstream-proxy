@@ -1,3 +1,4 @@
+import { IsNotEmpty, IsString } from 'class-validator';
 export interface ChainInfo {
   name: string;
   chainId: number;
@@ -24,4 +25,16 @@ class TokenInfoDto {
 export class GetChainsResponseDto {
   success: boolean;
   chains: ChainInfo[];
+}
+
+export class GetTokensParamsDto {
+  @IsString()
+  @IsNotEmpty()
+  chainName: string;
+}
+
+export class GetChainTokensResponseDto {
+  success: boolean;
+  chainName: string;
+  tokens: Record<string, TokenInfoDto>;
 }

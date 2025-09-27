@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from '../common/services/http-client.service';
-import { GetChainsResponseDto } from './dto/get-chains.dto';
+import {
+  GetChainsResponseDto,
+  GetChainTokensResponseDto,
+} from './dto/get-chains.dto';
 
 @Injectable()
 export class ChainService {
@@ -13,12 +16,25 @@ export class ChainService {
       const response =
         await this.httpClient.get<GetChainsResponseDto>('/chains');
 
-      this.logger.log(
-        `Retrieved ${response.chains.length} chains from relayer`,
-      );
       return response;
     } catch (error) {
-      this.logger.error('Failed to fetch chains from relayer', error);
+      this.logger.error('Failed to fetch chains from relayer: ', error);
+      throw error;
+    }
+  }
+
+  async getChainTokens(chainName: string): Promise<GetChainTokensResponseDto> {
+    try {
+      const response = await this.httpClient.get<GetChainTokensResponseDto>(
+        '/chains/' + chainName + '/tokens',
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch tokens for the chain ${chainName} from relayer: `,
+        error,
+      );
       throw error;
     }
   }

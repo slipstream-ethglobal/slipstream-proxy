@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Logger, Request } from '@nestjs/common';
+import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ChainService } from './chain.service';
-import { GetChainsResponseDto } from './dto/get-chains.dto';
+import {
+  GetChainsResponseDto,
+  GetChainTokensResponseDto,
+  GetTokensParamsDto,
+} from './dto/get-chains.dto';
 
 @Controller('chains')
 export class ChainController {
@@ -11,18 +13,27 @@ export class ChainController {
   constructor(private readonly chainService: ChainService) {}
 
   @Get()
-  async getChains(@Request() request: Request): Promise<GetChainsResponseDto> {
-    const requestId = (request as any).requestId;
-
+  async getChains(): Promise<GetChainsResponseDto> {
     try {
       const result = await this.chainService.getChains();
 
-      this.logger.log(
-        `[${requestId}] Successfully retrieved ${result.chains.length} chains`,
-      );
       return result;
     } catch (error) {
-      this.logger.error(`[${requestId}] Failed to get chains:`, error);
+      this.logger.error(`Failed to get chains: `, error);
+      throw error;
+    }
+  }
+
+  @Get(':chainName/tokens')
+  async getChainTokens(
+    @Param() params: GetTokensParamsDto,
+  ): Promise<GetChainTokensResponseDto> {
+    try {
+      const result = await this.chainService.getChainTokens(params.chainName);
+
+      return result;
+    } catch (error) {
+      this.logger.error(`Failed to get chain tokens: `, error);
       throw error;
     }
   }
