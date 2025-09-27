@@ -1,4 +1,5 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
+import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
 import { GetNonceQueryDto, GetNonceResponseDto } from './dto/transfers.dto';
 import { TransfersService } from './transfers.service';
 
@@ -17,6 +18,18 @@ export class TransfersController {
       return result;
     } catch (error) {
       this.logger.error('Error getting nonce: ', error);
+      throw error;
+    }
+  }
+
+  @Post('quote')
+  async getQuote(@Body() body: GetQuoteDto): Promise<GetQuoteResponseDto> {
+    try {
+      const result = await this.transfersService.getQuote(body);
+
+      return result;
+    } catch (error) {
+      this.logger.error('Error getting quote: ', error);
       throw error;
     }
   }

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
+import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
 import { GetNonceQueryDto, GetNonceResponseDto } from './dto/transfers.dto';
 
 @Injectable()
@@ -13,6 +14,21 @@ export class TransfersService {
       const response = await this.httpClient.get<GetNonceResponseDto>(
         '/nonce',
         query,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error('Failed to fetch chains from relayer: ', error);
+      throw error;
+    }
+  }
+
+  async getQuote(body: GetQuoteDto): Promise<GetQuoteResponseDto> {
+    try {
+      console.log(body);
+      const response = await this.httpClient.post<GetQuoteResponseDto>(
+        '/quote',
+        body,
       );
 
       return response;

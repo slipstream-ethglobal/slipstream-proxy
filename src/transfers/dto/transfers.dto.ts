@@ -9,8 +9,8 @@ export class GetNonceQueryDto {
 }
 
 export class GetNonceResponseDto {
-  success: string;
+  success: boolean;
   chainName: string;
   userAddress: string;
-  nonce: string;
+  nonce: number;
 }
