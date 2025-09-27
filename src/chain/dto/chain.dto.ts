@@ -34,7 +34,7 @@ export class GetTokensParamsDto {
 }
 
 export class GetChainTokensResponseDto {
-  success: boolean;
+  success: string;
   chainName: string;
   tokens: Record<string, TokenInfoDto>;
 }
