@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
-import { HealthResponse, NewRelayerHealthResponse } from './health.dto';
+import { FeeEstimateResponse } from './dto/gas.dto';
+import { HealthResponse, NewRelayerHealthResponse } from './dto/health.dto';
 
 @Injectable()
 export class NewRelayerService {
@@ -38,6 +39,23 @@ export class NewRelayerService {
       return response;
     } catch (error) {
       this.handleError(error, 'relay transaction');
+    }
+  }
+
+  async getFeeEstimate(params: {
+    chainId: string;
+    tokenSymbol: string;
+    amount: string;
+  }) {
+    const { chainId, tokenSymbol, amount } = params;
+
+    try {
+      const response = await this.httpClient.get<FeeEstimateResponse>(
+        `/api/v1/relayer/fee/${chainId}/${tokenSymbol}/${amount}`,
+      );
+      return response;
+    } catch (error) {
+      this.handleError(error, 'get fee estimate');
     }
   }
 
