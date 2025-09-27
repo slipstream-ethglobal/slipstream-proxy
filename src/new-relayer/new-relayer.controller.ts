@@ -1,4 +1,4 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { NewRelayerService } from './new-relayer.service';
 
 @Controller()
@@ -15,5 +15,11 @@ export class NewRelayerController {
   @Get('api/v1/relayer/ping')
   async pingRelayer() {
     return await this.newRelayerService.newRelayerPing();
+  }
+
+  @Post('api/v1/relayer/relay')
+  async relayTransaction(@Body() body) {
+    // TODO: not doing any validation here
+    return await this.newRelayerService.relayTransaction(body);
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
 import { HealthResponse, NewRelayerHealthResponse } from './health.dto';
@@ -5,16 +6,15 @@ import { HealthResponse, NewRelayerHealthResponse } from './health.dto';
 @Injectable()
 export class NewRelayerService {
   private readonly logger = new Logger(NewRelayerService.name);
+
   constructor(private readonly httpClient: HttpClientService) {}
 
   async ping() {
     try {
       const response = await this.httpClient.get<HealthResponse>('/ping');
-
       return response;
     } catch (error) {
-      this.logger.error('Failed to get ping from relayer: ', error);
-      throw error;
+      this.handleError(error, 'ping relayer');
     }
   }
 
@@ -23,11 +23,26 @@ export class NewRelayerService {
       const response = await this.httpClient.get<NewRelayerHealthResponse>(
         '/api/v1/relayer/ping',
       );
-
       return response;
     } catch (error) {
-      this.logger.error('Failed to get ping from new relayer: ', error);
-      throw error;
+      this.handleError(error, 'new relayer ping');
     }
+  }
+
+  async relayTransaction(body: any) {
+    try {
+      const response = await this.httpClient.post<NewRelayerHealthResponse>(
+        '/api/v1/relayer/relay',
+        body,
+      );
+      return response;
+    } catch (error) {
+      this.handleError(error, 'relay transaction');
+    }
+  }
+
+  private handleError(error: any, context: string): never {
+    this.logger.error(`Failed to ${context}:`, error?.message || error);
+    throw error;
   }
 }
