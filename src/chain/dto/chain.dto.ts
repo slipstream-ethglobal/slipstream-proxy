@@ -10,16 +10,16 @@ export interface ChainInfo {
 }
 
 class FeeSettings {
-  baseFeeBps: string;
-  maxFeeBps: string;
-  minFeeUsd: string;
+  baseFeeBps: number;
+  maxFeeBps: number;
+  minFeeUsd: number;
 }
 
 class TokenInfoDto {
   address: string;
   symbol: string;
   name: string;
-  decimals: string;
+  decimals: number;
 }
 
 export class GetChainsResponseDto {
@@ -34,7 +34,7 @@ export class GetTokensParamsDto {
 }
 
 export class GetChainTokensResponseDto {
-  success: string;
+  success: boolean;
   chainName: string;
   tokens: Record<string, TokenInfoDto>;
 }
