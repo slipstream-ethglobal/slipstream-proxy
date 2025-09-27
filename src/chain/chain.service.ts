@@ -3,7 +3,7 @@ import { HttpClientService } from '../common/services/http-client.service';
 import {
   GetChainsResponseDto,
   GetChainTokensResponseDto,
-} from './dto/get-chains.dto';
+} from './dto/chain.dto';
 
 @Injectable()
 export class ChainService {

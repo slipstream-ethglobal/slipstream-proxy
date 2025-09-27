@@ -4,7 +4,7 @@ import {
   GetChainsResponseDto,
   GetChainTokensResponseDto,
   GetTokensParamsDto,
-} from './dto/get-chains.dto';
+} from './dto/chain.dto';
 
 @Controller('chains')
 export class ChainController {
