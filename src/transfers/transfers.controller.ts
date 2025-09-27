@@ -4,6 +4,8 @@ import {
   GasCacheStatsResponseDto,
   GasPriceResponseDto,
   GetGasParamsDto,
+  GetPermitCheckParamsDto,
+  PermitSupportResponseDto,
 } from './dto/gas.dto';
 import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
 import { PrepareSignatureDto } from './dto/signature.dto';
@@ -36,6 +38,27 @@ export class TransfersController {
     @Body() body: RelayTransferDto,
   ): Promise<RelayTransferResponseDto> {
     return await this.transfersService.relayTransfer(body);
+  }
+
+  @Post('process-standard-gasless-transfer')
+  async processStandardGaslessTransfer(
+    @Body() body: RelayTransferDto,
+  ): Promise<RelayTransferResponseDto> {
+    return await this.transfersService.processStandardGaslessTransfer(body);
+  }
+
+  @Post('process-permit-gasless-transfer')
+  async processPermitBasedGaslessTransfer(
+    @Body() body: RelayTransferDto,
+  ): Promise<RelayTransferResponseDto> {
+    return await this.transfersService.processPermitBasedGaslessTransfer(body);
+  }
+
+  @Get('check-permit-support/:chainName/:tokenAddress')
+  async checkPermitSupport(
+    @Param() params: GetPermitCheckParamsDto,
+  ): Promise<PermitSupportResponseDto> {
+    return await this.transfersService.checkPermitSupport(params);
   }
 
   @Post('estimate-gas')

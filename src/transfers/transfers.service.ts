@@ -4,6 +4,8 @@ import {
   EstimateGasResponseDto,
   GasCacheStatsResponseDto,
   GasPriceResponseDto,
+  GetPermitCheckParamsDto,
+  PermitSupportResponseDto,
 } from './dto/gas.dto';
 import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
 import { PrepareSignatureDto } from './dto/signature.dto';
@@ -60,6 +62,59 @@ export class TransfersService {
       return response;
     } catch (error) {
       this.logger.error('Error while relay transfer: ', error);
+      throw error;
+    }
+  }
+
+  async processStandardGaslessTransfer(
+    body: RelayTransferDto,
+  ): Promise<RelayTransferResponseDto> {
+    try {
+      const response = await this.httpClient.post<RelayTransferResponseDto>(
+        '/process-standard-gasless-transfer',
+        body,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error(
+        'Error while processing standard gasless transfer: ',
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async processPermitBasedGaslessTransfer(
+    body: RelayTransferDto,
+  ): Promise<RelayTransferResponseDto> {
+    try {
+      const response = await this.httpClient.post<RelayTransferResponseDto>(
+        '/process-permit-gasless-transfer',
+        body,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error(
+        'Error while processing permit based gasless transfer: ',
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async checkPermitSupport(
+    params: GetPermitCheckParamsDto,
+  ): Promise<PermitSupportResponseDto> {
+    try {
+      const response = await this.httpClient.get<PermitSupportResponseDto>(
+        '/check-permit-support/' + params.chainName + '/' + params.tokenAddress,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error('Error while checking permit support: ', error);
       throw error;
     }
   }

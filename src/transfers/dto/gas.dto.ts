@@ -29,3 +29,18 @@ export class GetGasParamsDto {
   @IsNotEmpty()
   chainName: string;
 }
+
+export class GetPermitCheckParamsDto {
+  @IsString()
+  @IsNotEmpty()
+  chainName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  tokenAddress: string;
+}
+
+export class PermitSupportResponseDto {
+  success: boolean;
+  supportsPermit: boolean;
+}
