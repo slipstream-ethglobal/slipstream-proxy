@@ -36,4 +36,27 @@ export class NewRelayerController {
       amount,
     });
   }
+
+  @Get('api/v1/relayer/status/:transactionHash')
+  async getTransactionStatus(
+    @Param('transactionHash') transactionHash: string,
+  ) {
+    // TODO: not doing any validation here
+    return await this.newRelayerService.getTransactionStatus(transactionHash);
+  }
+
+  @Get('api/v1/relayer/info')
+  async getRelayerInfo() {
+    return await this.newRelayerService.getRelayerInfo();
+  }
+
+  @Get('api/v1/relayer/limits/:chainId')
+  async getSafetyLimits(@Param('chainId') chainId: string) {
+    return await this.newRelayerService.getSafetyLimits(chainId);
+  }
+
+  @Get('api/v1/relayer/network/:chainId')
+  async getNetworkStatus(@Param('chainId') chainId: string) {
+    return await this.newRelayerService.getNetworkStatus(chainId);
+  }
 }

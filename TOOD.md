@@ -3,8 +3,8 @@ new routes as per relayer
 - [ ] /api/v1/relayer
   - [x] /ping GET
   - [x] /relay POST
-  - [ ] /fee/:chainId/:tokenSymbol/:amount GET
-  - [ ] /status/:transactionHash GET
-  - [ ] /info GET
-  - [ ] /limits/:chainId GET
-  - [ ] /network/:chainId GET
+  - [x] /fee/:chainId/:tokenSymbol/:amount GET
+  - [x] /status/:transactionHash GET
+  - [x] /info GET
+  - [x] /limits/:chainId GET
+  - [x] /network/:chainId GET

@@ -3,6 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
 import { FeeEstimateResponse } from './dto/gas.dto';
 import { HealthResponse, NewRelayerHealthResponse } from './dto/health.dto';
+import {
+  NetworkStatusResponse,
+  RelayerInfoResponse,
+  SafetyLimitsResponse,
+  TransactionStatus,
+} from './dto/transaction.dto';
 
 @Injectable()
 export class NewRelayerService {
@@ -56,6 +62,46 @@ export class NewRelayerService {
       return response;
     } catch (error) {
       this.handleError(error, 'get fee estimate');
+    }
+  }
+
+  async getTransactionStatus(transactionHash: string) {
+    try {
+      return await this.httpClient.get<TransactionStatus>(
+        `/api/v1/relayer/status/${transactionHash}`,
+      );
+    } catch (error) {
+      this.handleError(error, 'get transaction status');
+    }
+  }
+
+  async getRelayerInfo() {
+    try {
+      return await this.httpClient.get<RelayerInfoResponse>(
+        `/api/v1/relayer/info`,
+      );
+    } catch (error) {
+      this.handleError(error, 'get relayer info');
+    }
+  }
+
+  async getSafetyLimits(chainId: string) {
+    try {
+      return await this.httpClient.get<SafetyLimitsResponse>(
+        `/api/v1/relayer/limits/${chainId}`,
+      );
+    } catch (error) {
+      this.handleError(error, 'get safety limits');
+    }
+  }
+
+  async getNetworkStatus(chainId: string) {
+    try {
+      return await this.httpClient.get<NetworkStatusResponse>(
+        `/api/v1/relayer/network/${chainId}`,
+      );
+    } catch (error) {
+      this.handleError(error, 'get network status');
     }
   }
 
