@@ -12,11 +12,7 @@ export class TransfersController {
     @Query() query: GetNonceQueryDto,
   ): Promise<GetNonceResponseDto> {
     try {
-      const { chainName, userAddress } = query;
-      const result = await this.transfersService.getUserNonce(
-        chainName,
-        userAddress,
-      );
+      const result = await this.transfersService.getUserNonce(query);
 
       return result;
     } catch (error) {
