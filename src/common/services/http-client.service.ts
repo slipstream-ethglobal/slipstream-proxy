@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -91,13 +92,35 @@ export class HttpClientService {
       const status = response.status;
 
       if (status < 200 || status >= 300) {
+        // response.data may be object or string. Try to preserve structured data.
+        let errorPayload: any = null;
+        if (response.data && typeof response.data === 'object') {
+          errorPayload = response.data;
+        } else if (typeof response.data === 'string') {
+          // try to parse JSON string (the relayer sometimes embeds JSON in a string)
+          try {
+            errorPayload = JSON.parse(response.data);
+          } catch {
+            // not JSON, keep raw string
+            errorPayload = response.data;
+          }
+        } else {
+          errorPayload = response.data;
+        }
+
         const errorText =
-          typeof response.data === 'string'
-            ? response.data
-            : JSON.stringify(response.data);
+          typeof errorPayload === 'string'
+            ? errorPayload
+            : JSON.stringify(errorPayload);
+
         this.logger.error(
           `[${requestId}] Relayer error: ${status} - ${errorText}`,
         );
+
+        // If we have a parsed object, forward it as response body; otherwise forward a message
+        if (errorPayload && typeof errorPayload === 'object') {
+          throw new HttpException(errorPayload, this.mapHttpStatus(status));
+        }
 
         throw new HttpException(
           `Relayer error: ${status} - ${errorText}`,
@@ -122,14 +145,46 @@ export class HttpClientService {
       // If the error comes with a response (HTTP error forwarded)
       if (error?.response && typeof error.response.status === 'number') {
         const status = error.response.status;
+        // response.data might be string containing JSON; try parse
+        let errorPayload: any = null;
+        if (error.response.data && typeof error.response.data === 'object') {
+          errorPayload = error.response.data;
+        } else if (typeof error.response.data === 'string') {
+          try {
+            errorPayload = JSON.parse(error.response.data);
+          } catch {
+            // not JSON => the service sometimes wraps JSON inside strings like:
+            // "Relayer error: 400 - {\"success\":false,...}"
+            // try to extract first {...} or [...]
+            const jsonMatch = error.response.data.match(
+              /(\{[\s\S]*\}|\[[\s\S]*\])/,
+            );
+            if (jsonMatch) {
+              try {
+                errorPayload = JSON.parse(jsonMatch[0]);
+              } catch {
+                errorPayload = error.response.data;
+              }
+            } else {
+              errorPayload = error.response.data;
+            }
+          }
+        } else {
+          errorPayload = error.response.data;
+        }
+
         const errorText =
-          typeof error.response.data === 'string'
-            ? error.response.data
-            : JSON.stringify(error.response.data);
+          typeof errorPayload === 'string'
+            ? errorPayload
+            : JSON.stringify(errorPayload);
 
         this.logger.error(
           `[${requestId}] Relayer error (caught): ${status} - ${errorText}`,
         );
+
+        if (errorPayload && typeof errorPayload === 'object') {
+          throw new HttpException(errorPayload, this.mapHttpStatus(status));
+        }
 
         throw new HttpException(
           `Relayer error: ${status} - ${errorText}`,
