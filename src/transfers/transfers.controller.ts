@@ -1,5 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  EstimateGasResponseDto,
+  GasCacheStatsResponseDto,
+  GasPriceResponseDto,
+  GetGasParamsDto,
+} from './dto/gas.dto';
 import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
+import { PrepareSignatureDto } from './dto/signature.dto';
 import {
   GetNonceQueryDto,
   GetNonceResponseDto,
@@ -29,5 +36,24 @@ export class TransfersController {
     @Body() body: RelayTransferDto,
   ): Promise<RelayTransferResponseDto> {
     return await this.transfersService.relayTransfer(body);
+  }
+
+  @Post('estimate-gas')
+  async estimateGas(
+    @Body() body: PrepareSignatureDto,
+  ): Promise<EstimateGasResponseDto> {
+    return await this.transfersService.estimateGas(body);
+  }
+
+  @Post('gas-price/:chainName')
+  async getGasPrice(
+    @Param() params: GetGasParamsDto,
+  ): Promise<GasPriceResponseDto> {
+    return await this.transfersService.getGasPrice(params.chainName);
+  }
+
+  @Get('gas-cache-stats')
+  async getGasCacheStats(): Promise<GasCacheStatsResponseDto> {
+    return await this.transfersService.getGasCacheStats();
   }
 }

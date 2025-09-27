@@ -1,6 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpClientService } from 'src/common/services/http-client.service';
+import {
+  EstimateGasResponseDto,
+  GasCacheStatsResponseDto,
+  GasPriceResponseDto,
+} from './dto/gas.dto';
 import { GetQuoteDto, GetQuoteResponseDto } from './dto/quote.dto';
+import { PrepareSignatureDto } from './dto/signature.dto';
 import {
   GetNonceQueryDto,
   GetNonceResponseDto,
@@ -54,6 +60,47 @@ export class TransfersService {
       return response;
     } catch (error) {
       this.logger.error('Error while relay transfer: ', error);
+      throw error;
+    }
+  }
+
+  async estimateGas(
+    body: PrepareSignatureDto,
+  ): Promise<EstimateGasResponseDto> {
+    try {
+      const response = await this.httpClient.post<EstimateGasResponseDto>(
+        '/estimate-gas',
+        body,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error('Error estimating gas: ', error);
+      throw error;
+    }
+  }
+
+  async getGasPrice(chainName: string): Promise<GasPriceResponseDto> {
+    try {
+      const response = await this.httpClient.post<GasPriceResponseDto>(
+        '/gas-price/' + chainName,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error(`Error getting gas price for ${chainName}: `, error);
+      throw error;
+    }
+  }
+
+  async getGasCacheStats(): Promise<GasCacheStatsResponseDto> {
+    try {
+      const response =
+        await this.httpClient.get<GasCacheStatsResponseDto>('/gas-cache-stats');
+
+      return response;
+    } catch (error) {
+      this.logger.error(`Error getting gas cache: `, error);
       throw error;
     }
   }
